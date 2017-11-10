@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ServiceMonitor
+metadata:
+  name: elasticsearch
+  labels:
+    k8s-app: elasticsearch
+  namespace: instrumentation
+spec:
+  selector:
+    matchLabels:
+      k8s-app: elasticsearch-metrics
+  namespaceSelector:
+    matchNames:
+    - instrumentation
+  endpoints:
+  - port: http-metrics
+    interval: 30s

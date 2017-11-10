@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ServiceMonitor
+metadata:
+  name: jmx-metrics
+  labels:
+    k8s-app: jmx-metrics
+  namespace: instrumentation
+spec:
+  selector:
+    matchLabels:
+      monitoring: jmx-metrics
+  namespaceSelector:
+    matchNames:
+    - tooling
+  endpoints:
+  - port: jmx-metrics
+    interval: 30s

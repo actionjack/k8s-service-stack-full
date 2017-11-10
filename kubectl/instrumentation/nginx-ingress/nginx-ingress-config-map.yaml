@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-ingress
+  namespace: instrumentation
+  labels:
+    app: nginx-ingress
+    nginx-ingress-component: controller
+data:
+  use-proxy-protocol: "true"

@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-ingress-default-backend
+  namespace: instrumentation
+  labels:
+    app: nginx-ingress
+    nginx-ingress-component: default-backend
+spec:
+  ports:
+  - port: 80
+    targetPort: http
+  selector:
+    app: nginx-ingress
+    nginx-ingress-component: default-backend

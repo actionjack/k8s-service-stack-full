@@ -1,0 +1,113 @@
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: elasticsearch-master
+  namespace: instrumentation
+  labels:
+    app: elasticsearch
+    elasticsearch-node-type: master
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: elasticsearch-master
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+        elasticsearch-node-type: master
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - elasticsearch
+                  - key: "elasticsearch-node-type"
+                    operator: In
+                    values:
+                      - master
+              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - elasticsearch
+                    - key: "elasticsearch-node-type"
+                      operator: In
+                      values:
+                        - master
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+          name: master
+          command:
+            - "/bin/bash"
+            - "/tmp/bin/start-elasticsearch.sh"
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 1Gi
+          ports:
+            - containerPort: 9300
+              name: transport
+              protocol: TCP
+          volumeMounts:
+            # - name: elasticsearch-data
+            #   mountPath: /usr/share/elasticsearch/data
+            - name: startup
+              mountPath: /tmp/bin
+          env:
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ES_CLUSTER_NAME
+              value: instrumentation-cluster
+            - name: ES_MASTER_SERVICE_NAME
+              value: elasticsearch-master
+            - name: ES_IS_MASTER
+              value: "1"
+            # - name: "AWS_DEFAULT_REGION"
+            #   value: "ap-southeast-2"
+            # - name: AWS_ACCESS_KEY_ID
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: elasticsearch
+            #       key: AWS_ACCESS_KEY_ID
+            # - name: AWS_SECRET_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: elasticsearch
+            #       key: AWS_SECRET_ACCESS_KEY
+          readinessProbe:
+            tcpSocket:
+              port: 9300
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+          livenessProbe:
+            tcpSocket:
+              port: 9300
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 2
+      volumes:
+        - name: startup
+          configMap:
+            name: elasticsearch-startup-1

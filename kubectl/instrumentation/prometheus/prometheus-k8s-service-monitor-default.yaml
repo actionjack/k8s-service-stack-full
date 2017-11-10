@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ServiceMonitor
+metadata:
+  name: prom
+  labels:
+    k8s-app: prom
+  namespace: instrumentation
+spec:
+  selector:
+    matchLabels:
+      monitoring: prom
+  namespaceSelector:
+    matchNames:
+    - tooling
+  endpoints:
+  - port: prom
+    interval: 30s
