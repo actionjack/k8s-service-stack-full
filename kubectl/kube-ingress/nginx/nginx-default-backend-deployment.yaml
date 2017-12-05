@@ -1,20 +1,20 @@
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: nginx-ingress-default-backend
-  namespace: instrumentation
+  name: nginx-default-backend
+  namespace: kube-ingress
   labels:
-    app: nginx-ingress
-    nginx-ingress-component: default-backend
-
+    k8s-app: default-http-backend
+    k8s-addon: nginx-ingress.addons.k8s.io
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   template:
     metadata:
       labels:
-        app: nginx-ingress
-        nginx-ingress-component: default-backend
+        k8s-app: default-http-backend
+        k8s-addon: nginx-ingress.addons.k8s.io
+        app: nginx-default-backend
     spec:
       terminationGracePeriodSeconds: 60
       containers:
