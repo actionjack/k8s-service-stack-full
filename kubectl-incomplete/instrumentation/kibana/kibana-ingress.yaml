@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: internal-elb
+    ingress.kubernetes.io/rewrite-target: /
+  name: kibana
+  namespace: instrumentation
+spec:
+  rules:
+  - host: kibana.${ENVIRONMENT_DOMAIN}
+    http:
+      paths:
+      - path: /api/v1/namespaces/instrumentation/services/kibana/proxy
+        backend:
+          serviceName: kibana
+          servicePort: http
+      - path: /
+        backend:
+          serviceName: kibana
+          servicePort: http
