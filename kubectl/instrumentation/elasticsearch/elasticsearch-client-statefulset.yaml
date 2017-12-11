@@ -1,0 +1,112 @@
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: elasticsearch-client
+  namespace: instrumentation
+  labels:
+    app: elasticsearch
+    elasticsearch-node-type: client
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: elasticsearch
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+        elasticsearch-node-type: client
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - elasticsearch
+                  - key: "elasticsearch-node-type"
+                    operator: In
+                    values:
+                      - client
+              topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - elasticsearch
+                    - key: "elasticsearch-node-type"
+                      operator: In
+                      values:
+                        - client
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+          name: elasticsearch
+          command:
+            - "/bin/bash"
+            - "/tmp/bin/start-elasticsearch.sh"
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 1Gi
+          ports:
+            - containerPort: 9200
+              name: http
+              protocol: TCP
+            - containerPort: 9300
+              name: transport
+              protocol: TCP
+          volumeMounts:
+            - name: startup
+              mountPath: /tmp/bin
+          env:
+            - name: "ES_JAVA_OPTS"
+              value: "-Xms512m -Xmx512m"
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ES_CLUSTER_NAME
+              value: instrumentation-cluster
+            - name: ES_MASTER_SERVICE_NAME
+              value: elasticsearch-master
+            # - name: "AWS_DEFAULT_REGION"
+            #   value: "ap-southeast-2"
+            # - name: AWS_ACCESS_KEY_ID
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: elasticsearch
+            #       key: AWS_ACCESS_KEY_ID
+            # - name: AWS_SECRET_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: elasticsearch
+            #       key: AWS_SECRET_ACCESS_KEY
+          readinessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+          livenessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 2
+      volumes:
+        - name: startup
+          configMap:
+            name: elasticsearch-startup-1
