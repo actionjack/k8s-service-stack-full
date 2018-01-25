@@ -4,8 +4,8 @@ metadata:
   name: admin
   namespace: apps
 subjects:
-- kind: User
-  name: user
+- kind: Group
+  name: developer
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
