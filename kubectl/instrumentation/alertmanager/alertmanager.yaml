@@ -1,3 +1,4 @@
+---
 apiVersion: "monitoring.coreos.com/v1"
 kind: "Alertmanager"
 metadata:
@@ -7,5 +8,4 @@ metadata:
   namespace: instrumentation
 spec:
   externalUrl: http://localhost:8001/api/v1/namespaces/instrumentation/services/alertmanager-main/proxy/
-  replicas: 3
-  version: v0.7.1
+  replicas: 2

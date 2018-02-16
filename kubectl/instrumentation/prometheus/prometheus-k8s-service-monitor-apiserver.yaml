@@ -1,3 +1,4 @@
+---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -13,12 +14,12 @@ spec:
       provider: kubernetes
   namespaceSelector:
     matchNames:
-    - default
+      - default
   endpoints:
-  - port: https
-    interval: 30s
-    scheme: https
-    tlsConfig:
-      caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-      serverName: kubernetes
-    bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    - port: https
+      interval: 30s
+      scheme: https
+      tlsConfig:
+        caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        serverName: kubernetes
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
