@@ -1,3 +1,4 @@
+---
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
@@ -7,13 +8,12 @@ metadata:
   namespace: instrumentation
 spec:
   externalUrl: http://localhost:8001/api/v1/namespaces/instrumentation/services/prometheus-k8s/proxy/
-  replicas: 3
-  version: v1.7.0
+  replicas: 2
   serviceAccountName: prometheus-k8s
   serviceMonitorSelector:
     matchExpressions:
-    - key: k8s-app
-      operator: Exists
+      - key: k8s-app
+        operator: Exists
   ruleSelector:
     matchLabels:
       role: prometheus-rulefiles
@@ -27,6 +27,6 @@ spec:
       memory: 3Gi
   alerting:
     alertmanagers:
-    - namespace: instrumentation
-      name: alertmanager-main
-      port: web
+      - namespace: instrumentation
+        name: alertmanager-main
+        port: web
