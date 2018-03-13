@@ -56,4 +56,3 @@ spec:
         - /nginx-ingress-controller
         - --default-backend-service=$(POD_NAMESPACE)/nginx-default-backend
         - --configmap=$(POD_NAMESPACE)/nginx-ingress
-        - --publish-service=$(POD_NAMESPACE)/nginx-ingress
