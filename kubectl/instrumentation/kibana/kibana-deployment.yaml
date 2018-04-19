@@ -23,8 +23,6 @@ spec:
             memory: 1Gi
             cpu: 200m
         env:
-          - name: "SERVER_BASEPATH"
-            value: "/api/v1/namespaces/instrumentation/services/kibana/proxy"
           - name: "NODE_OPTIONS"
             value: "--max-old-space-size=1000"
           - name: "ELASTICSEARCH_URL"
