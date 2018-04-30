@@ -101,7 +101,7 @@ spec:
               command:
                 - bash
                 - "-c"
-                - "set -eo pipefail && curl -fs localhost:9200/_cat/health?h=st | grep 'green'"
+                - "set -eo pipefail && curl -fs localhost:9200/_cat/health?h=st | egrep 'green|yellow'"
             initialDelaySeconds: 20
             periodSeconds: 10
             successThreshold: 3
