@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: common-environment
+    namespace: apps
+data:
+  JAVA_OPTS: "-XX:MaxRAMFraction=2 -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
