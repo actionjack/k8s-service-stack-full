@@ -50,7 +50,7 @@ spec:
       securityContext:
         fsGroup: 1000
       containers:
-        - image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+        - image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
           name: data
           command:
             - "/bin/bash"
