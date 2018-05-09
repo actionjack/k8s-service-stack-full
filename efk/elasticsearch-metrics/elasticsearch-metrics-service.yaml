@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-metrics
+  labels:
+    app: elasticsearch-metrics
+    k8s-app: elasticsearch-metrics
+  namespace: instrumentation
+spec:
+  ports:
+    - name: http-metrics
+      port: 8080
+      targetPort: 9108
+      protocol: TCP
+  selector:
+    app: elasticsearch-metrics

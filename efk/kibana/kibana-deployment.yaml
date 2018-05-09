@@ -1,0 +1,43 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: instrumentation
+  labels:
+    app: kibana
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: http
+          image: docker.elastic.co/kibana/kibana-oss:6.2.4
+          resources:
+            limits:
+              memory: 1.5Gi
+              cpu: 200m
+            requests:
+              memory: 1Gi
+              cpu: 200m
+          env:
+            - name: "NODE_OPTIONS"
+              value: "--max-old-space-size=1000"
+            - name: "ELASTICSEARCH_URL"
+              value: "http://elasticsearch:9200"
+            - name: "SERVER_PORT"
+              value: "5602"
+          ports:
+            - containerPort: 5602
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 3
