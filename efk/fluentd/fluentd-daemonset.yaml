@@ -2,29 +2,29 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: fluentd-v2.0.4
+  name: fluentd-v1.23
   namespace: instrumentation
   labels:
     k8s-app: fluentd
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
-    version: v2.0.4
+    version: v1.23
 spec:
   template:
     metadata:
       labels:
         k8s-app: fluentd
         kubernetes.io/cluster-service: "true"
-        version: v2.0.4
+        version: v1.23
     spec:
       serviceAccountName: fluentd
       containers:
         - name: fluentd
-          image: gcr.io/google_containers/fluentd-elasticsearch:v2.0.4
+          image: gcr.io/google_containers/fluentd-elasticsearch:1.23
           command:
             - '/bin/sh'
             - '-c'
-            - '/run.sh $FLUENTD_ARGS'
+            - '/usr/sbin/td-agent $FLUENTD_ARGS'
           env:
             - name: FLUENTD_ARGS
               value: -q
@@ -42,8 +42,6 @@ spec:
             - name: varlibdockercontainers
               mountPath: /var/lib/docker/containers
               readOnly: true
-            - name: config-volume
-              mountPath: /etc/fluent/config.d
       terminationGracePeriodSeconds: 30
       volumes:
         - name: varlog
@@ -52,9 +50,6 @@ spec:
         - name: varlibdockercontainers
           hostPath:
             path: /var/lib/docker/containers
-        - name: config-volume
-          configMap:
-            name: fluentd-es-config
       tolerations:
         - effect: NoSchedule
           operator: Exists

@@ -2,9 +2,11 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: kube2iam
+  name: fluentd
   labels:
-    app: kube2iam
+    k8s-app: fluentd
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
 rules:
   - apiGroups:
       - ""

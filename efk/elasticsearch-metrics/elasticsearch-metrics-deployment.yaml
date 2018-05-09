@@ -1,0 +1,43 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: elasticsearch-metrics
+  labels:
+    app: elasticsearch-metrics
+  namespace: instrumentation
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-metrics
+    spec:
+      containers:
+        - command:
+            - /bin/elasticsearch_exporter
+            - -es.uri=http://elasticsearch:9200
+            - -es.all=true
+          image: justwatch/elasticsearch_exporter:1.0.1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9108
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+          name: elasticsearch-metrics
+          ports:
+            - containerPort: 9108
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9108
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: 25m
+              memory: 64Mi
+            requests:
+              cpu: 25m
+              memory: 64Mi
