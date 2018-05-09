@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-master
+  namespace: instrumentation
+  labels:
+    app: elasticsearch
+    elasticsearch-node-type: master
+spec:
+  ports:
+    - port: 9200
+      protocol: TCP
+  clusterIP: None
+  selector:
+    app: elasticsearch
+    elasticsearch-node-type: master

@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-startup-1
+  namespace: instrumentation
+data:
+  start-elasticsearch.sh: |
+    : ${ES_CLUSTER_NAME?}
+    : ${K8S_POD_NAME?}
+    : ${ES_MASTER_SERVICE_NAME?}
+    [[ -n ${ES_IS_MASTER:+x} ]] && ES_IS_MASTER=true || ES_IS_MASTER=false
+    [[ -n ${ES_IS_DATA:+x} ]] && ES_IS_DATA=true || ES_IS_DATA=false
+    # bin/elasticsearch-plugin install repository-s3
+    env cluster.name=${ES_CLUSTER_NAME} \
+        discovery.zen.ping.unicast.hosts=${ES_MASTER_SERVICE_NAME} \
+        discovery.zen.minimum_master_nodes=2 \
+        node.name=${K8S_POD_NAME} \
+        node.master=${ES_IS_MASTER} \
+        node.data=${ES_IS_DATA} \
+        /bin/bash /usr/local/bin/docker-entrypoint.sh
