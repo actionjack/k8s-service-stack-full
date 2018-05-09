@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/microdc/k8s-service-stack-full.svg?branch=master)](https://travis-ci.org/microdc/k8s-service-stack-full)
+
 # k8s-service-stack-full
 temp repo to house the full service configuration while we split it
 
