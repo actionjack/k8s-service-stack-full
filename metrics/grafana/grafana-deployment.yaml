@@ -59,7 +59,7 @@ spec:
           command:
             - 'sh'
             - '-c'
-            - '. /mnt/creds/creds.sh && /bin/grafana-watcher --wat  ch-dir=/var/grafana-dashboards --grafana-url=http://localhost:3000'
+            - '. /mnt/creds/creds.sh && /bin/grafana-watcher --watch-dir=/var/grafana-dashboards --grafana-url=http://localhost:3000'
           resources:
             requests:
               memory: "16Mi"
