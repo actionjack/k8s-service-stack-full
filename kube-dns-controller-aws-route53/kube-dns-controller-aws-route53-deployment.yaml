@@ -1,0 +1,78 @@
+---
+# This is a workaround for https://github.com/kubernetes/kops/issues/4055
+# As Kops incorrectly starts the dns-controller with --dns=gossip,
+# we overwrite that here. Note that you must also add the following
+# policy to Master nodes for this to work:
+# {
+#     "Version": "2012-10-17",
+#     "Statement": [
+#         {
+#             "Sid": "",
+#             "Effect": "Allow",
+#             "Action": [
+#                 "route53:ListHostedZones"
+#             ],
+#             "Resource": "*"
+#         }
+#     ]
+# }
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    k8s-addon: dns-controller.addons.k8s.io
+    k8s-app: dns-controller
+    version: v1.9.0
+  name: dns-controller
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: dns-controller
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+        scheduler.alpha.kubernetes.io/tolerations: '[{"key": "dedicated", "value": "master"}]'
+      labels:
+        k8s-addon: dns-controller.addons.k8s.io
+        k8s-app: dns-controller
+        version: v1.9.0
+    spec:
+      containers:
+        - command:
+            - /usr/bin/dns-controller
+            - --watch-ingress=false
+            - --dns=aws-route53
+            - --gossip-seed=127.0.0.1:3999
+            - --zone=*/*
+            - -v=2
+          image: kope/dns-controller:1.9.0
+          imagePullPolicy: IfNotPresent
+          name: dns-controller
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: Default
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: dns-controller
+      serviceAccountName: dns-controller
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
