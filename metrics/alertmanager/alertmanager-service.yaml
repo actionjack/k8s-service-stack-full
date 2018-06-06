@@ -4,6 +4,7 @@ kind: Service
 metadata:
   labels:
     alertmanager: main
+    k8s-app: alertmanager
   name: alertmanager-main
   namespace: instrumentation
 spec:
