@@ -1,0 +1,35 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fluentd
+  labels:
+    k8s-app: fluentd
+  namespace: instrumentation
+spec:
+  jobLabel: k8s-app
+  selector:
+    matchLabels:
+      k8s-app: fluentd
+  namespaceSelector:
+    matchNames:
+      - instrumentation
+  endpoints:
+    - port: http-metrics
+      interval: 30s
+      honorLabels: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd
+  labels:
+    k8s-app: fluentd
+  namespace: instrumentation
+spec:
+  ports:
+    - name: http-metrics
+      port: 24231
+      protocol: TCP
+  selector:
+    k8s-app: fluentd
