@@ -33,12 +33,19 @@ spec:
           command:
             - 'sh'
             - '-c'
-            - '. /mnt/creds/creds.sh && /run.sh'
+            - '/run.sh'
           env:
             - name: GF_AUTH_BASIC_ENABLED
               value: "true"
             - name: GF_AUTH_ANONYMOUS_ENABLED
-              value: "true"
+              value: "false"
+            - name: GF_SECURITY_ADMIN_USER
+              value: "admin"
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin
+                  key: admin-password
           volumeMounts:
             - name: grafana-storage
               mountPath: /var/grafana-storage
