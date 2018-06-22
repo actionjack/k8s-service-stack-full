@@ -92,10 +92,10 @@ data:
                         "steppedLine": false,
                         "targets": [
                             {
-                                "expr": "sum(rate(node_cpu{mode=\"idle\"}[2m])) * 100",
+                                "expr": "avg (sum (rate(node_cpu{mode=\"idle\"}[2m]) * 100) by (instance, cpu)) by (instance)",
                                 "hide": false,
                                 "intervalFactor": 10,
-                                "legendFormat": "",
+                                "legendFormat": "{{instance}}",
                                 "refId": "A",
                                 "step": 50
                             }
