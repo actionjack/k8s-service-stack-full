@@ -11,3 +11,4 @@ spec:
     - port: 5602
   selector:
     app: kibana
+  type: NodePort
