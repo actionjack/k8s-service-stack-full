@@ -11,7 +11,7 @@ spec:
   updateStrategy:
     type: RollingUpdate
   serviceName: elasticsearch-master
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -56,9 +56,6 @@ spec:
             - "/tmp/bin/start-elasticsearch.sh"
           resources:
             limits:
-              cpu: 200m
-              memory: 1Gi
-            requests:
               cpu: 200m
               memory: 1Gi
           ports:

@@ -12,41 +12,13 @@ spec:
   updateStrategy:
     type: RollingUpdate
   serviceName: elasticsearch-data
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
         app: elasticsearch
         elasticsearch-node-type: data
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "app"
-                    operator: In
-                    values:
-                      - elasticsearch
-                  - key: "elasticsearch-node-type"
-                    operator: In
-                    values:
-                      - data
-              topologyKey: kubernetes.io/hostname
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: "app"
-                      operator: In
-                      values:
-                        - elasticsearch
-                    - key: "elasticsearch-node-type"
-                      operator: In
-                      values:
-                        - data
-                topologyKey: failure-domain.beta.kubernetes.io/zone
       securityContext:
         fsGroup: 1000
       containers:
@@ -61,7 +33,7 @@ spec:
               memory: 4Gi
             requests:
               cpu: 500m
-              memory: 4Gi
+              memory: 200m
           ports:
             - containerPort: 9300
               name: transport

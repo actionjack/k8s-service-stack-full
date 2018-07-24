@@ -14,7 +14,7 @@ data:
     # bin/elasticsearch-plugin install repository-s3
     env cluster.name=${ES_CLUSTER_NAME} \
         discovery.zen.ping.unicast.hosts=${ES_MASTER_SERVICE_NAME} \
-        discovery.zen.minimum_master_nodes=2 \
+        discovery.zen.minimum_master_nodes=1 \
         node.name=${K8S_POD_NAME} \
         node.master=${ES_IS_MASTER} \
         node.data=${ES_IS_DATA} \
