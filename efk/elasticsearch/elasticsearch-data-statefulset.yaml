@@ -57,10 +57,10 @@ spec:
             - "/tmp/bin/start-elasticsearch.sh"
           resources:
             limits:
-              cpu: 500m
+              cpu: 4
               memory: 4Gi
             requests:
-              cpu: 500m
+              cpu: 1
               memory: 4Gi
           ports:
             - containerPort: 9300
