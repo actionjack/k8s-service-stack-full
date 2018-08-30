@@ -7,7 +7,6 @@ metadata:
     prometheus: k8s
   namespace: instrumentation
 spec:
-  externalUrl: http://localhost:8001/api/v1/namespaces/instrumentation/services/prometheus-k8s/proxy/
   replicas: 2
   serviceAccountName: prometheus-k8s
   serviceMonitorSelector:
