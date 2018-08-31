@@ -110,3 +110,9 @@ spec:
         - name: startup
           configMap:
             name: elasticsearch-startup-1
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: elasticsearch-init
+        securityContext:
+          privileged: true
