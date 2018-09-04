@@ -55,6 +55,3 @@ spec:
         - name: config-volume
           configMap:
             name: fluentd-es-config
-      tolerations:
-        - effect: NoSchedule
-          operator: Exists
